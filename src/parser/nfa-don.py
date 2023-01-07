@@ -19,9 +19,11 @@ don_ast = ast.parse(don_regex)
 https: // github.com/python/cpython/blob/a34f0bdcf6a3c91f4b80a788205416e82e95f70f/Lib/ast.py  # L33
 5. compile() -> re.parse()に飛ぶ。正規表現マッチングの実装はこれ。少し解説する。
 https: // github.com/python/cpython/blob/a34f0bdcf6a3c91f4b80a788205416e82e95f70f/Lib/re/_parser.py  # L507
-
+sa4
 # NFA構築 (Thompson法)
-1. 正規表現の本 4章 DFA型エンジンのThompson法を参考にして実装する
+# 1. 正規表現の本 4章 DFA型エンジンのThompson法を参考にして実装する
+# 文字列そのものではなく、正規表現を言語として受け付けるNFAを構築する必要がある
+# 図で書くやり方が簡単そう。遷移図を書いてしまう。
 
 # DFA変換 (決定性化)
 2. この辺も探したら普通に出てきそう
