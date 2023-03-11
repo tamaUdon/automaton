@@ -13,15 +13,21 @@ M = {s: 0 for s in S}
 # ε遷移のマスクテーブル作成に必要な定義
 L = 11  # 簡単のため状態数は固定値
 B = {}  # {s: 0*L for s in S}  # 基本はMと同じ
+Ed = []
 
 
-def buildEpsilon(Qn, S, In, Fn, Bn, En):  # 任意のNFAを引数にとる？
+def buildEpsilon(S, Bn=M, En=):  # シミュレートしたいのNFA N=(Qn, S, In, Fn, Bn, En)
     # Builds ε-mask-table
     # ref. chrome-extension://efaidnbmnnnibpcajpcglclefindmkaj/https://ocw.hokudai.ac.jp/wp-content/uploads/2016/01/InformationKnowledgeNetwork-2005-Note-05.pdf
     for σ in S:
         B[σ] = 0*L
         for i in range(L):
             B[σ] = B[σ] | Bn[i[σ]]
+    Ed[0] = En[0]  # 初期化
+    for i in range(L):
+        for j in range(2**i-1):
+            Ed[2**i + j] = En[i] | Ed[j]
+    return (B, Ed)
 
 
 def bitparallelThompsonNfa():
