@@ -13,7 +13,8 @@ m = len(P)  # キーワードの長さ nfaの状態数のこと
 # S = frozenset(("a", "b", "c"))  # 入力文字の集合
 S = frozenset(("a", "b"))  # 入力文字の集合
 # マスクビット初期化　{ 各入力文字 : patternの長さ分の0で初期化=0b000000 }
-M = [{s: 0 for s in S} for _ in s] # [{a:0,b:0},{...},{...}]
+M = [{s_alpha: 0 for s_alpha in S} for _ in range(s)] # [{a:0,b:0},{...},{...}]
+print(f'init M={M}')
 
 # # シミュレートしたいε-NFAのε-closure + 5つ組定義
 # E = {
@@ -119,18 +120,18 @@ def bitparallelThompsonNfa():
     hshvals = [0]*s
 
     # 各subpatternの長さ=4,6,8 * (subpatternの個数(3) - i - 1)=2,1,0 -> 8,6,0
-    shift = [len(s[i]) * (s - i - 1) for i in range(s)]
+    shift = [len(subpattern[i]) * (s - i - 1) for i in range(s)]
 
     # Initialize the match value
     match = False
 
     # マスクビット作成
-    temp = 1  # bitを立てた状態で初期化
     for i in range(s):
+        temp = 1  # bitを立てた状態で初期化
         for sub_a in subpattern[i]:
             M[i][sub_a] |= temp
             temp <<= 1
-            #print
+            print(f'bin(M[i])={bin(M[i][sub_a])}')
 
     # (M, R) = (B, Ed) = buildEpsilon()
 
@@ -142,22 +143,36 @@ def bitparallelThompsonNfa():
     #     #print(f'M[{p}]= {bin(M[p])}')
 
     # マッチング
-    Mを二重配列対応させる -> ok
-    Rを二重配列対応させる　いらないかも？
-
-    R = 0
+    print(f'init M={M}')
     # D = R[In] # 0  # NFAの現在の状態配列（初期状態で初期化）
     accept = 1 << (m-1)  # bin(accept)=0b100000 のように受理状態だけ1にする
     print(f'bin(accept)= {bin(accept)}')
     # for s in range(n): # n=対象検索文字列の長さ
-    for i in range(s): # range(s)=サブパターン配列の大きさ=ここでは3
+
+    # これを参考に書き直す
+    # Shift the pattern by the appropriate
+    # amount
+    # for j in range(s):
+    #     if i + shift[j] < n - m + 1:
+    #         break
+    # else:
+    #     i += shift[j]
+    
+    for t_alpha in T: # T=対象検索文字列
         # << & (Shif-And) を使ったNFAのシミュレーション
-        R = ((R << 1) | 1) & M[i][T[s]]
-        # D = R[((D << 1) | 1) & M[T[s]]]
-        # print(f'D= {bin(D)}, M[T[s]]={bin(M[T[s]])} in {s}nd loop')
-        if (R & accept) != 0:
-        # if (D & accept) != 0:
-            print(f'we\'re found pattern at {s}')
+        R = 0
+        for i in range(s): # range(s)=サブパターン配列の大きさ=ここでは3
+            #print(f'bin(M[i][t_alpha])={bin(M[i][t_alpha])}')
+            print(f'bin((R << 1) | 1)={bin(((R << 1) | 1))}')
+            多分ここの計算がおかしい
+            R = (((R << 1) | 1) & M[i][t_alpha])
+            # D = R[((D << 1) | 1) & M[T[s]]]
+            # print(f'D= {bin(D)}, M[T[s]]={bin(M[T[s]])} in {s}nd loop')
+            # print(f'current R={R}')
+            print(f'bin(R)= {bin(R)}')
+            if (R & accept) != 0:
+            # if (D & accept) != 0:
+                print(f'we\'re found pattern at {s}')
 
     # Shift the pattern by the appropriate
     # amount
